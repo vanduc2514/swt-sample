@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.ifi</groupId>
+  <artifactId>simple-swt</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <name>simple-swt</name>
+  <!-- FIXME change it to the project's website -->
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <shippingFolderName>shipping</shippingFolderName>
+    <dependencyFolderName>libs</dependencyFolderName>
+    <mainClassFullyQualifiedName>com.ifi.simple_swt.App</mainClassFullyQualifiedName>
+  </properties>
+  
+  <repositories>
+  	<repository>
+  		<id>swt repo</id>
+  		<url>http://repository.jspresso.org/maven2/</url>
+  	</repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.eclipse</groupId>
+    	<artifactId>swt</artifactId>
+    	<version>4.6.1</version>
+	</dependency>
+  </dependencies>
+
+  <build>
+      <plugins>
+        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.9</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${shippingFolderName}/${dependencyFolderName}</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/${shippingFolderName}</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>${dependencyFolderName}/</classpathPrefix>
+                            <mainClass>${mainClassFullyQualifiedName}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.25</version>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>
+                                ${project.build.directory}/${shippingFolderName}/${project.artifactId}-${project.version}.exe
+                            </outfile>
+                            <jar>
+                                ${project.build.directory}/${shippingFolderName}/${project.artifactId}-${project.version}.jar
+                            </jar>
+                            <errTitle>ejb-client</errTitle>
+                            <classPath>
+                                <mainClass>${mainClassFullyQualifiedName}</mainClass>
+                                <addDependencies>true</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+                            <jre>
+                                <minVersion>1.11.0</minVersion>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.0.0.0</fileVersion>
+                                <txtFileVersion>1.0.0.0</txtFileVersion>
+                                <fileDescription>
+                                	Hello World Client to invoke Remote Java Bean on Server
+                                </fileDescription>
+                                <copyright>Nguyen Van Duc</copyright>
+                                <productVersion>1.0.0.0</productVersion>
+                                <txtProductVersion>1.0.0.0</txtProductVersion>
+                                <productName>Hello World Client</productName>
+                                <internalName>hello-world-client</internalName>
+                                <originalFilename>helloworld.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+      </plugins>
+  </build>
+  
+  <profiles>
+	<profile>
+		<id>Linux (x86/GTK)</id>
+		<activation>
+			<os>
+				<name>Linux</name>
+				<arch>i386</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.gtk.linux.x86</swt.artifactId>
+		</properties>
+	</profile>
+	<profile>
+		<id>Linux (x86_64/GTK)</id>
+		<activation>
+			<os>
+				<name>Linux</name>
+				<arch>amd64</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId>
+		</properties>
+	</profile>
+	<profile>
+		<id>Windows (x86)</id>
+		<activation>
+			<os>
+				<family>windows</family>
+				<arch>x86</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.win32.win32.x86</swt.artifactId>
+		</properties>
+	</profile>
+	<profile>
+		<id>Windows (x86_64)</id>
+		<activation>
+			<os>
+				<family>windows</family>
+				<arch>x86_64</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId>
+		</properties>
+	</profile>
+	<profile>
+		<id>Mac OS X (x86/Cocoa)</id>
+		<activation>
+			<os>
+				<family>macosx</family>
+				<arch>i386</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
+		</properties>
+	</profile>
+	<profile>
+		<id>Mac OS X (x86_64/Cocoa)</id>
+		<activation>
+			<os>
+				<family>macosx</family>
+				<arch>x86_64</arch>
+			</os>
+		</activation>
+		<properties>
+			<swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId>
+		</properties>
+	</profile>
+	</profiles>	
+</project>
