@@ -4,6 +4,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Button;
+
+import javax.naming.NamingException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
@@ -12,7 +15,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import com.ifi.message.MessageResolver;
+
 public class HelloWorldApp {
+	private MessageResolver messageResolver;
+
+	public HelloWorldApp() throws NamingException {
+		messageResolver = new MessageResolver();
+	}
+
 	protected Shell shell;
 
 	/**
@@ -93,7 +104,14 @@ public class HelloWorldApp {
 		btnClickMe.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event arg0) {
-				lblResponsecontent.setText(inputText.getText());
+				String name = inputText.getText();
+				String serverResponse = "";
+				if (name.equals("")) {
+					serverResponse = messageResolver.getMessage();
+				} else {
+					serverResponse = messageResolver.getMessage(name);
+				}
+				lblResponsecontent.setText(serverResponse);
 				System.out.println(inputText.getText());
 			}
 		});
